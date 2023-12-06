@@ -1,4 +1,5 @@
-// Reuse codes provided in lab 4.
+// DB MODEL FOR USERS
+// REUSE CODES PROVIDED IN LAB 4
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({

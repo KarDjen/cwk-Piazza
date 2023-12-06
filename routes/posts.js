@@ -5,17 +5,20 @@ const router = express.Router();
 const Post = require('../models/Post'); // Ensure this path is correct
 const verifyToken = require('../verifyToken'); // Ensure this middleware is correctly implemented
 
-// Implement ACTION 2: Authorised users post a message for a particular topic in the Piazza API.
+
+// IMPLEMENT ACTION 2: Authorised users post a message for a particular topic in the Piazza API.
 // ENDPOINT TO CREATE A NEW POST
 router.post('/', verifyToken, async (req, res) => {
     try {
         const expirationDuration = req.body.expirationTime; // This is a number in minutes
         const expirationTime = new Date(Date.now() + expirationDuration * 60000); // Convert to Date
 
+
         // Validation for expiration time being between 5 and 60 minutes
         if (isNaN(expirationDuration) || expirationDuration <5 || expirationDuration>60) {
         return res.status(400).send({message: 'Expiration time must be between 5 and 60 minutes'});
         }
+
 
         // Create a new post instance with data from the request body
         const newPost = new Post({
@@ -27,6 +30,7 @@ router.post('/', verifyToken, async (req, res) => {
             status: 'Live'
         });
 
+
         // Save the new post to the database
         const savedPost = await newPost.save();
         res.status(201).send(savedPost); // Send the saved post with status code 201 (Created)
@@ -36,9 +40,10 @@ router.post('/', verifyToken, async (req, res) => {
     }
 });
 
-// Implement ACTION 3: Registered users browse messages per topic using the Piazza API.
-// Implement Action 5: Authorised users could browse for the most active post per topic with the highest likes and dislikes.
-// Implement Action 6: Authorised users could browse the history data of expired posts per topic.
+
+// IMPLEMENT ACTION 3: Registered users browse messages per topic using the Piazza API.
+// IMPLEMENT Action 5: Authorised users could browse for the most active post per topic with the highest likes and dislikes.
+// IMPLEMENT Action 6: Authorised users could browse the history data of expired posts per topic.
 // ENDPOINT TO GET POSTS
 router.get('/', verifyToken, async (req, res) => {
     try {
@@ -64,5 +69,6 @@ router.get('/', verifyToken, async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
 
 module.exports = router;

@@ -1,6 +1,7 @@
 // IMPORT THE POST MODEL
 const Post = require('../models/Post');
 
+
 // FUNCTION TO UPDATE THE STATUS OF POSTS
 const updatePostStatus = () => {
     // Setting an interval to run the code, and we decided every 60 seconds
@@ -19,5 +20,6 @@ const updatePostStatus = () => {
         }
     }, 60000); // runs every 60 seconds
 };
+
 
 module.exports = updatePostStatus;

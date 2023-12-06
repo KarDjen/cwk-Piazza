@@ -10,15 +10,17 @@ const verifyToken = require('../verifyToken'); // Ensure this middleware is corr
 const fs = require('fs');
 const path = require('path');
 
+
 // PROHIBITED KEYWORDS FUNCTION
-// Use facebook list of bad words
+// Use "unofficial" facebook list of bad words: https://www.freewebheaders.com/bad-words-list-and-page-moderation-words-list-for-facebook/
 const prohibitedKeywords = function() {
     const filePath = path.join(__dirname, 'prohibitedKeywords.txt');
     const fileContent = fs.readFileSync(filePath, 'utf8');
     return fileContent.split('\n').map(line => line.trim()).filter(line => line !== ''); // Split the content by new line to get an array of keywords
 }
 
-// Implement ACTION 4: Registered users perform basic operations, including “like”, “dislike”, or “comment” a message posted for a topic.
+
+// IMPLEMENT ACTION 4: Registered users perform basic operations, including “like”, “dislike”, or “comment” a message posted for a topic.
 // ENDPOINT TO LIKE OR DISLIKE
 router.post('/react',verifyToken, async (req, res) => {
 
@@ -34,17 +36,20 @@ router.post('/react',verifyToken, async (req, res) => {
             return res.status(404).send('Post not found');
         }
 
-        // Check if the user is the author of the post. A post owner cannot like or dislike their messages.
+
+        // Check if the user is the author of the post: a post owner cannot like or dislike their messages.
         const user = await User.findOne({username: usernameFromToken});
         if (post.postOwner.equals(user._id)) {
             return res.status(403).send('Authors cannot like or dislike their own posts');
         }
 
-        // Check if the post is not expired. After the end of the expiration time,
+
+        // Check if the post is not expired: After the end of the expiration time,
         // the message will not accept any further user interactions (likes, dislikes, or comments).
         if (post.status === 'Expired') {
             return res.status(403).send('Post has expired. Access denied.');
         }
+
 
         // Check if the user has already liked or disliked this post. User cannot like or dislike several times.
         const existingInteraction = await Interaction.findOne({
@@ -57,12 +62,12 @@ router.post('/react',verifyToken, async (req, res) => {
             return res.status(403).send('User has already liked/disliked this post');
         }
 
+
         // Create and save a new interaction
         const newInteraction = new Interaction({
-            username: usernameFromToken, // assuming the username or userId is passed in the request
-            interactionType: type, // 'like' or 'dislike'
+            username: usernameFromToken,
+            interactionType: type,
             post: postId,
-                // interactionTime and timeLeftForPostExpiration will be set by default
         });
 
         const savedInteraction = await newInteraction.save();
@@ -85,7 +90,8 @@ router.post('/react',verifyToken, async (req, res) => {
         }
 });
 
-// Implement ACTION 4: Registered users perform basic operations, including “like”, “dislike”, or “comment” a message posted for a topic.
+
+// IMPLEMENT ACTION 4: Registered users perform basic operations, including “like”, “dislike”, or “comment” a message posted for a topic.
 // ENDPOINT TO COMMENT
 router.post('/comment', verifyToken, async (req, res) => {
 
@@ -94,16 +100,19 @@ router.post('/comment', verifyToken, async (req, res) => {
     const userNameFromToken = req.user.username // Ensure this line is inside the route
 
     try {
+
         // Check if the post exists
         const post = await Post.findById(postId);
         if (!post) {
             return res.status(404).send('Post not found');
         }
 
-        // Check if the comment text is present
+
+        // Check if user has provided a comment
         if (!comment || comment.trim() === '') {
             return res.status(400).send('A comment is required');
         }
+
 
         // Check if the post is not expired
         if (post.status === 'Expired') {
@@ -112,11 +121,13 @@ router.post('/comment', verifyToken, async (req, res) => {
 
         const loadProhibitedKeywords = prohibitedKeywords();
 
+
         // Check for prohibited keywords in the comment
         const isCommentInappropriate = loadProhibitedKeywords.some(keyword => comment.toLowerCase().includes(keyword));
         if (isCommentInappropriate) {
             return res.status(400).send('Your comment is breaching our internal policies.');
         }
+
 
         // Create and save a new comment
         const newComment = new Interaction({
@@ -127,6 +138,7 @@ router.post('/comment', verifyToken, async (req, res) => {
         });
 
         const savedComment = await newComment.save();
+
 
         // Add the new comment to the post's comments array
         post.comments.push({

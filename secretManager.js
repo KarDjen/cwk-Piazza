@@ -1,3 +1,4 @@
+// IMPLEMENT SECURITY LAYER FOR DATABASE CONNECTION
 const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
 const client = new SecretManagerServiceClient();

@@ -1,15 +1,16 @@
-// Using codes provided in lab 4.
+// USING CODES PROVIDED IN LAB 4
+
 
 // IMPORT JOI AND PROHIBITED KEYWORDS
 const joi = require('joi'); // for data validation
 const {prohibitedKeywords} = require('../routes/interactions.js'); // prohibited keywords for username validation
 
-// VALIDATIONS
 
-// EMAIL
+// VALIDATION EMAIL
 const emailValidation = joi.string().required().min(3).max(256).email().messages({'string.email': 'Email must be a valid email address'});
 
-// PASSWORD
+
+// VALIDATION PASSWORD
 // Use regex pattern to add layer of security
 const passwordValidation = joi.string().required().min(6).max(1024)
                               .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})'))
@@ -19,8 +20,9 @@ const passwordValidation = joi.string().required().min(6).max(1024)
                                   'string.max': 'Password must be less than 1024 characters long'
                               });
 
-// USERNAME
-// Use prohibited keywords to safeguard respect
+
+// VALIDATION USERNAME
+// Use prohibited keywords to safeguard respect in Piazza community
 const usernameValidation = joi.string().required().min(3).max(256).custom((value, helpers) => {
     const lowerCaseValue = value.toLowerCase();
     if (prohibitedKeywords().some(keyword => keyword.toLowerCase() === lowerCaseValue)) {
@@ -33,7 +35,8 @@ const usernameValidation = joi.string().required().min(3).max(256).custom((value
     'string.invalidUsername': 'Username contains prohibited content'
 });
 
-// USER REGISTRATION
+
+// VALIDATION USER REGISTRATION
 const registerValidation = (data) => {
     const schemaValidation = joi.object({
         username: usernameValidation,
@@ -43,7 +46,8 @@ const registerValidation = (data) => {
     return schemaValidation.validate(data)
 }
 
-// USER LOGIN
+
+// VALIDATION USER LOGIN
 const loginValidation = (data) => {
     const schemaValidation = joi.object({
         email:emailValidation,
@@ -52,6 +56,6 @@ const loginValidation = (data) => {
     return schemaValidation.validate(data)
 }
 
-// Export validation functions for use in other modules
+
 module.exports.registerValidation = registerValidation
 module.exports.loginValidation = loginValidation

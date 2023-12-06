@@ -1,3 +1,4 @@
+// DB MODEL FOR POST
 const mongoose = require('mongoose');
 
 // Create the Schema. 'Post Identifier' is already created by MongoDB

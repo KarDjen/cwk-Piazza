@@ -1,3 +1,4 @@
+// DB MODEL FOR INTERACTIONS
 const mongoose = require('mongoose');
 
 const UserinteractionSchema = new mongoose.Schema({
