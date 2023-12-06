@@ -40,7 +40,7 @@ router.post('/react',verifyToken, async (req, res) => {
         // Check if the user is the author of the post: a post owner cannot like or dislike their messages.
         const user = await User.findOne({username: usernameFromToken});
         if (post.postOwner.equals(user._id)) {
-            return res.status(403).send('Seriously...who likes its own post?! We cannot let that happened..trust Takeshi-san!');
+            return res.status(403).send('Seriously...who likes its own post?! We cannot let that happen..trust Takeshi-san!');
         }
 
 
