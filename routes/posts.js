@@ -16,7 +16,7 @@ router.post('/', verifyToken, async (req, res) => {
 
         // Validation for expiration time being between 5 and 60 minutes
         if (isNaN(expirationDuration) || expirationDuration <5 || expirationDuration>60) {
-        return res.status(400).send({message: 'Expiration time must be between 5 and 60 minutes'});
+        return res.status(400).send({message: 'Expiration time must be between 5 and 60 minutes. Well, still longer than your last relationship...'});
         }
 
 

@@ -20,7 +20,7 @@ router.post('/register', async(req, res) => {
 
     // Validation 2 to check if user exists
     const userExists = await User.findOne({email:req.body.email})
-    if (userExists) return res.status(400).send({message: "User already exists"})
+    if (userExists) return res.status(400).send({message: "Sorry, that one is already taken. Try logging in instead or use another email or just call your momma for help!"})
 
 
     // Hash the password
@@ -56,12 +56,12 @@ router.post('/login', async(req, res) =>{
 
     // Validation 2 to check if user exists
     const user = await User.findOne({email:req.body.email})
-    if (!user) return res.status(400).send({message: "User does not exist"})
+    if (!user) return res.status(400).send({message: "\"Hmmmm looks like our dedicated Takeshi can't find you... Are you sure you're one of us?\""})
 
 
     // Validation 3 to check user password
     const passwordValidation = await bcryptjs.compare(req.body.password,user.password)
-    if (!passwordValidation) return res.status(400).send({message: "Incorrect password"})
+    if (!passwordValidation) return res.status(400).send({message: "\"Oops! Wrong password. If you try one more incorrect password, we'll have to lock you out...Feeling the pressure?! Relax, we have not implemented that yet...or!"})
 
 
     // IMPLEMENT ACTION 1: Authorised users access the Piazza API using the oAuth v2 protocol to perform any interaction.

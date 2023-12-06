@@ -33,21 +33,21 @@ router.post('/react',verifyToken, async (req, res) => {
         // Check if the post exists
         const post = await Post.findById(postId);
         if (!post) {
-            return res.status(404).send('Post not found');
+            return res.status(404).send('Nope, that post is not around.');
         }
 
 
         // Check if the user is the author of the post: a post owner cannot like or dislike their messages.
         const user = await User.findOne({username: usernameFromToken});
         if (post.postOwner.equals(user._id)) {
-            return res.status(403).send('Authors cannot like or dislike their own posts');
+            return res.status(403).send('Seriously...who likes its own post?! We cannot let that happened..trust Takeshi-san!');
         }
 
 
         // Check if the post is not expired: After the end of the expiration time,
         // the message will not accept any further user interactions (likes, dislikes, or comments).
         if (post.status === 'Expired') {
-            return res.status(403).send('Post has expired. Access denied.');
+            return res.status(403).send('Post has expired. Too late.');
         }
 
 
@@ -59,7 +59,7 @@ router.post('/react',verifyToken, async (req, res) => {
         });
 
         if (existingInteraction) {
-            return res.status(403).send('User has already liked/disliked this post');
+            return res.status(403).send('You have already interacted my luv!' );
         }
 
 
@@ -104,13 +104,13 @@ router.post('/comment', verifyToken, async (req, res) => {
         // Check if the post exists
         const post = await Post.findById(postId);
         if (!post) {
-            return res.status(404).send('Post not found');
+            return res.status(404).send('Post not found. By the way, remember to buy milk for your momma?!');
         }
 
 
         // Check if user has provided a comment
         if (!comment || comment.trim() === '') {
-            return res.status(400).send('A comment is required');
+            return res.status(400).send('A comment is required. Please. Por favor?!');
         }
 
 
@@ -125,7 +125,7 @@ router.post('/comment', verifyToken, async (req, res) => {
         // Check for prohibited keywords in the comment
         const isCommentInappropriate = loadProhibitedKeywords.some(keyword => comment.toLowerCase().includes(keyword));
         if (isCommentInappropriate) {
-            return res.status(400).send('Your comment is breaching our internal policies.');
+            return res.status(400).send("Your comment is not cool. You are breaching our internal policies. Let's go back to something respectful and meaningful, what about that?!" );
         }
 
 
