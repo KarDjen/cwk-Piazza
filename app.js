@@ -25,14 +25,20 @@ app.use(express.json());
 async function startServer() {
     try{
         // Fetch DB connection string from Secret Manager
-        const projectId = 'aqueous-radio-401119';
-        const secretId = 'cwt_Piazza';
-        const dbConnector = await accessSecret(secretId, projectId);
+        const dbprojectId = 'aqueous-radio-401119';
+        const dbsecretId = 'cwt_Piazza';
+        const dbConnector = await accessSecret(dbsecretId, dbprojectId);
 
         await mongoose.connect(dbConnector,{ useNewUrlParser: true, useUnifiedTopology: true });
         console.log('DB is now connected!');
 
+        const tokenProjectId = 'aqueous-radio-401119';
+        const tokenSecretId = 'cwt_Piazza_ST'; // Updated for Token Secret
+        const tokenSecret = await accessSecret(tokenSecretId, tokenProjectId);
+        process.env.TOKEN_SECRET = tokenSecret;
+
         updatePostStatus();
+
     } catch(err) {
         console.error('Error connecting to DB:', err);
     }

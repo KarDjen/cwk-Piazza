@@ -31,12 +31,12 @@ router.post('/', verifyToken, async (req, res) => {
         });
 
 
-        // Save the new post to the database
+        // Save the new post to the database and send message to the user
         const savedPost = await newPost.save();
-        res.status(201).send(savedPost); // Send the saved post with status code 201 (Created)
+        res.status(201).send({message: "You've just piaaaaazzzzzaaaaaaa!!!!!"});
 
     } catch (err) {
-        res.status(500).send({ message: err.message, errors: err.errors });
+        res.status(500).send({ message: "Nope. It didn't work. Try your luck again!", errors: err.errors });
     }
 });
 

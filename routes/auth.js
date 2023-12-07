@@ -37,8 +37,8 @@ router.post('/register', async(req, res) => {
 
 
     try{
-        const savedUser = await user.save()
-        res.send(savedUser)
+        await user.save()
+        res.status(201).send({message:"You've successfully registered with us. Welcome to Piaaazzzzzzaaaaaaa!!!"})
     }catch(err) {
         res.status(400).send({message: err})
     }
@@ -61,14 +61,14 @@ router.post('/login', async(req, res) =>{
 
     // Validation 3 to check user password
     const passwordValidation = await bcryptjs.compare(req.body.password,user.password)
-    if (!passwordValidation) return res.status(400).send({message: "\"Oops! Wrong password. If you try one more incorrect password, we'll have to lock you out...Feeling the pressure?! Relax, we have not implemented that yet...or!"})
+    if (!passwordValidation) return res.status(400).send({message: "\"Oops! Wrong password. If you try one more time, well you will be locked out...Feeling the pressure?! Relax, we have not implemented that yet...or!"})
 
 
     // IMPLEMENT ACTION 1: Authorised users access the Piazza API using the oAuth v2 protocol to perform any interaction.
     // Generate an auth-token
     try{
         const token = jsonwebtoken.sign({ username: user.username, email: user.email }, process.env.TOKEN_SECRET);
-        res.header('auth-token', token).send({'auth-token': token});
+        res.header('auth-token', token).send({'auth-token': token, message: "You're back! We've missed you so much!...nah kidding, you have nothing better to do than being here again?!" });
     } catch (err){
         res.status(500).send('Error generating authentication token.');
     }

@@ -33,21 +33,21 @@ router.post('/react',verifyToken, async (req, res) => {
         // Check if the post exists
         const post = await Post.findById(postId);
         if (!post) {
-            return res.status(404).send('Nope, that post is not around.');
+            return res.status(404).send({message: 'Nope, that post is not around.'});
         }
 
 
         // Check if the user is the author of the post: a post owner cannot like or dislike their messages.
         const user = await User.findOne({username: usernameFromToken});
         if (post.postOwner.equals(user._id)) {
-            return res.status(403).send('Seriously...who likes its own post?! We cannot let that happen..trust Takeshi-san!');
+            return res.status(403).send({message: 'Seriously...who likes its own post?! We cannot let that happen..trust Takeshi-san!'});
         }
 
 
         // Check if the post is not expired: After the end of the expiration time,
         // the message will not accept any further user interactions (likes, dislikes, or comments).
         if (post.status === 'Expired') {
-            return res.status(403).send('Post has expired. Too late.');
+            return res.status(403).send({message:'Post has expired. Too late.' });
         }
 
 
@@ -59,7 +59,7 @@ router.post('/react',verifyToken, async (req, res) => {
         });
 
         if (existingInteraction) {
-            return res.status(403).send('You have already interacted my luv!' );
+            return res.status(403).send({message: 'You have already interacted my luv!'});
         }
 
 
@@ -70,8 +70,7 @@ router.post('/react',verifyToken, async (req, res) => {
             post: postId,
         });
 
-        const savedInteraction = await newInteraction.save();
-
+        await newInteraction.save();
 
         // Update the post's likes and dislikes count based on the interaction type
         if (type === 'like') {
@@ -83,7 +82,7 @@ router.post('/react',verifyToken, async (req, res) => {
         // Save the updated post
         await post.save();
 
-        res.status(201).send(savedInteraction);
+        res.status(201).send({message: "Well done, you've just reacted...now go back to work!"});
 
         }catch (err){
             res.status(500).send({message: err.message});
@@ -104,28 +103,32 @@ router.post('/comment', verifyToken, async (req, res) => {
         // Check if the post exists
         const post = await Post.findById(postId);
         if (!post) {
-            return res.status(404).send('Post not found. By the way, remember to buy milk for your momma?!');
+            return res.status(404).send({message: 'Post not found. By the way, remember to buy milk for your momma?!'});
         }
 
 
         // Check if user has provided a comment
         if (!comment || comment.trim() === '') {
-            return res.status(400).send('A comment is required. Please. Por favor?!');
+            return res.status(400).send({message: 'A comment is required. Please. Por favor?!'});
         }
 
 
         // Check if the post is not expired
         if (post.status === 'Expired') {
-            return res.status(403).send('Post has expired. Access denied.');
+            return res.status(403).send({message: 'Post has expired. Too late.'});
         }
 
         const loadProhibitedKeywords = prohibitedKeywords();
 
 
         // Check for prohibited keywords in the comment
-        const isCommentInappropriate = loadProhibitedKeywords.some(keyword => comment.toLowerCase().includes(keyword));
+        const isCommentInappropriate = loadProhibitedKeywords.some(keyword => {
+            const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+            return regex.test(comment);
+        });
+
         if (isCommentInappropriate) {
-            return res.status(400).send("Your comment is not cool. You are breaching our internal policies. Let's go back to something respectful and meaningful, what about that?!" );
+            return res.status(400).send({message : "Your comment is not cool. You are breaching our internal policies. Let's go back to something respectful and meaningful, what about that?!"});
         }
 
 
@@ -137,7 +140,9 @@ router.post('/comment', verifyToken, async (req, res) => {
             post: postId,
         });
 
-        const savedComment = await newComment.save();
+        await newComment.save();
+
+        res.status(201).send({message: "Pasted. Pohsted. Wait..posted. Here you go!"})
 
 
         // Add the new comment to the post's comments array
@@ -149,11 +154,12 @@ router.post('/comment', verifyToken, async (req, res) => {
 
         await post.save();
 
-        res.status(201).send(savedComment);
 
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
 });
 
-module.exports = {router, prohibitedKeywords};
+module.exports.router = router;
+module.exports.prohibitedKeywords = prohibitedKeywords;
+
