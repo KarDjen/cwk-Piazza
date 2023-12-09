@@ -1,6 +1,4 @@
-// USING CODES PROVIDED IN LAB 4
-
-
+// USING CODES PROVIDED IN LAB 4.1
 // IMPORT JOI AND PROHIBITED KEYWORDS
 const joi = require('joi'); // for data validation
 const {prohibitedKeywords} = require('../routes/interactions.js'); // prohibited keywords for username validation

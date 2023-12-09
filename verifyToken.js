@@ -1,11 +1,11 @@
-// USING CODES PROVIDED IN LAB 4
+// USING CODES PROVIDED IN LAB 4.1
 const jsonwebtoken = require('jsonwebtoken')
 
 function auth(req,res,next){
 
     // CHECK IF TOKEN EXISTS
     const token = req.header('auth-token')
-    if (!token) return res.status(401).send({messages:'Access denied'})
+    if (!token) return res.status(401).send({message:'Access denied'})
 
     // CHECK IF TOKEN IS CORRECT
     try{
@@ -13,7 +13,7 @@ function auth(req,res,next){
         req.user = verified
         next()
     }catch (err){
-        return res.status(401).send({messages:'Invalid token'})
+        return res.status(401).send({message:'Invalid token'})
     }
 }
 

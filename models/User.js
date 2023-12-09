@@ -27,5 +27,5 @@ const userSchema = mongoose.Schema({
     }
 })
 
-//  We link the database to this model
+
 module.exports = mongoose.model('users', userSchema)

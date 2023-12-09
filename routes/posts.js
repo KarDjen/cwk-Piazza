@@ -32,7 +32,7 @@ router.post('/', verifyToken, async (req, res) => {
 
 
         // Save the new post to the database and send message to the user
-        const savedPost = await newPost.save();
+        await newPost.save();
         res.status(201).send({message: "You've just piaaaaazzzzzaaaaaaa!!!!!"});
 
     } catch (err) {
